@@ -1,0 +1,1164 @@
+/* style.css */
+
+/* --- Variables --- */
+:root {
+    --primary: #e53e3e; /* A vibrant red for primary actions and highlights */
+    --primary-light: #fc8181; /* Lighter shade of primary for hover states */
+    --secondary: #2d3748; /* Dark blue-gray, often used for background or text on light backgrounds */
+    --dark: #1a202c; /* Very dark blue-gray, main background color */
+    --dark-light: #2d3748; /* Slightly lighter than dark, for cards/containers */
+    --light: #f7fafc; /* Near-white, for main text on dark backgrounds */
+    --light-dark: #e2e8f0; /* Off-white/light gray, for secondary text or borders */
+    --success: #38a169; /* Green for success messages/badges */
+    --warning: #dd6b20; /* Orange for warnings */
+    --danger: #e53e3e; /* Red for errors or destructive actions */
+    --white: #ffffff; /* Pure white */
+    --gray: #4a5568; /* Medium gray, for borders or subdued elements */
+    --gray-dark: #2d3748; /* Darker gray, for subtle separation */
+    --text: #e2e8f0; /* Default text color on dark backgrounds */
+    --text-light: #a0aec0; /* Lighter text color for labels, descriptions */
+}
+
+/* --- Global Resets & Typography --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color: var(--text);
+    background-color: var(--dark);
+    line-height: 1.6; /* Slightly increased line height for better readability */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px; /* Base font size */
+}
+
+/* --- Utility Classes --- */
+.text-light-dark {
+    color: var(--text-light);
+}
+
+.mb-4 { margin-bottom: 1.5rem; } /* Spacing utility */
+.mb-5 { margin-bottom: 2.5rem; }
+.mt-4 { margin-top: 1.5rem; }
+
+
+/* --- Buttons --- */
+.btn-primary {
+    width: 100%;
+    padding: 0.8rem 1.2rem; /* Adjusted padding */
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem; /* Adjusted font size */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none; /* For anchor tags acting as buttons */
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    padding: 0.8rem 1.2rem; /* Adjusted padding */
+    background-color: var(--gray);
+    border: 1px solid var(--gray-dark);
+    border-radius: 8px;
+    color: var(--light);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 1rem; /* Adjusted font size */
+}
+
+.btn-secondary:hover {
+    background-color: var(--gray-dark);
+    border-color: var(--gray);
+}
+
+.btn-logout {
+    width: 100%;
+    padding: 0.8rem 1.2rem; /* Adjusted padding */
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 1rem; /* Adjusted font size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-logout:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* --- Forms --- */
+.form-group {
+    margin-bottom: 1rem; /* Slightly reduced margin */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem; /* Slightly reduced margin */
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.95rem; /* Adjusted font size */
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem; /* Adjusted padding */
+    border: 1px solid var(--gray);
+    border-radius: 6px; /* Slightly smaller border-radius */
+    font-size: 0.95rem; /* Adjusted font size */
+    background-color: var(--gray-dark);
+    color: var(--text);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.3);
+}
+
+.form-group select:disabled {
+    background-color: rgba(74, 85, 104, 0.5);
+    cursor: not-allowed;
+}
+
+.password-input {
+    position: relative;
+}
+
+.password-input input {
+    padding-right: 2.5rem; /* Adjusted space for toggle icon */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0.8rem; /* Adjusted position */
+    top: 65%; /* Adjusted vertical alignment */
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.2s ease;
+    font-size: 0.9rem; /* Adjusted icon size */
+}
+
+.toggle-password:hover {
+    color: var(--light);
+}
+
+.availability-options,
+.contact-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Reduced gap */
+}
+
+.availability-option,
+.contact-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Reduced gap */
+    cursor: pointer;
+    color: var(--text-light);
+    font-size: 0.95rem; /* Adjusted font size */
+}
+
+.availability-option input[type="checkbox"],
+.contact-option input[type="radio"] {
+    width: auto;
+    margin: 0;
+}
+
+.availability-option span,
+.contact-option span {
+    user-select: none;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem; /* Reduced gap */
+    margin-top: 1.5rem; /* Reduced margin */
+    justify-content: flex-end;
+}
+
+/* --- Global Components --- */
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem; /* Reduced margin */
+    color: var(--primary);
+    font-size: 1.5rem; /* Adjusted font size */
+    font-weight: 700;
+    user-select: none;
+}
+
+.logo i {
+    margin-right: 0.5rem; /* Reduced margin */
+    font-size: 1.8rem; /* Adjusted font size */
+}
+
+.blood-badge {
+    width: 40px; /* Slightly smaller badge */
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem; /* Adjusted font size */
+    font-weight: bold;
+    color: var(--white);
+    background-color: var(--primary);
+    flex-shrink: 0;
+}
+
+.status-badge {
+    padding: 0.3rem 0.7rem; /* Adjusted padding */
+    border-radius: 6px;
+    font-size: 0.85rem; /* Adjusted font size */
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-badge.active {
+    background-color: var(--success);
+    color: var(--white);
+}
+
+/* --- Auth Container (Responsive Two-Column) --- */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch; /* Stretch items to fill height */
+    min-height: 100vh;
+    background-color: var(--dark);
+    padding: 1.5rem; /* Adjusted padding */
+    gap: 2rem; /* Gap between promo and form */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    max-width: 1200px; /* Max width for the entire container */
+    margin: 0 auto; /* Center the container */
+}
+
+.auth-promo {
+    flex: 0.7; /* Allows promo to take less relative space */
+    min-width: 280px; /* Minimum width for promo content */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--secondary); /* Background for the promo section */
+    border-radius: 12px;
+    color: var(--light);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+.auth-promo h1 {
+    font-size: 3rem; /* Larger font size for promo title */
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.auth-promo p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+.auth-form-wrapper {
+    flex: 1.3; /* Allows form wrapper to take more relative space */
+    min-width: 320px; /* Minimum width for the form card */
+    display: flex;
+    align-items: center; /* Vertically center the form card */
+    justify-content: center;
+}
+
+.auth-card {
+    background: var(--dark-light);
+    padding: 2rem; /* Adjusted padding */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px; /* Increased max width for the auth card */
+    animation: fadeIn 0.5s ease;
+}
+
+.auth-card h2 {
+    text-align: center;
+    margin-bottom: 1.5rem; /* Reduced margin */
+    color: var(--light);
+    font-size: 1.8rem; /* Adjusted font size */
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 1.5rem; /* Reduced margin */
+    color: var(--text-light);
+    font-size: 0.95rem; /* Adjusted font size */
+}
+
+.auth-switch a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: text-decoration 0.2s ease;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* --- Registration Form Specific Grid Layout --- */
+.registration-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for desktop */
+    gap: 1rem 1.5rem; /* Vertical and horizontal gap */
+}
+
+.registration-form-grid .form-group {
+    margin-bottom: 0; /* Let the grid gap handle spacing */
+}
+
+/* Make elements span full width in the grid */
+.registration-form-grid button[type="submit"],
+.auth-switch {
+    grid-column: 1 / -1; /* Span all columns */
+}
+
+/* --- Dashboard Selection --- */
+.dashboard-selection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem; /* Adjusted padding */
+    animation: fadeIn 0.5s ease;
+}
+
+.dashboard-selection h2 {
+    text-align: center;
+    margin-bottom: 2.5rem; /* Adjusted margin */
+    color: var(--light);
+    font-size: 2rem;
+}
+
+.selection-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem; /* Reduced gap */
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.selection-card {
+    background: var(--dark-light);
+    padding: 2rem; /* Adjusted padding */
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.selection-card:hover {
+    transform: translateY(-8px); /* Reduced lift on hover */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25); /* Adjusted shadow */
+}
+
+.selection-icon {
+    width: 80px; /* Slightly smaller icon container */
+    height: 80px;
+    margin: 0 auto 1.2rem; /* Adjusted margin */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 2.2rem; /* Adjusted icon size */
+    flex-shrink: 0;
+}
+
+.donor-selection .selection-icon {
+    background-color: rgba(229, 62, 62, 0.1);
+    color: var(--primary);
+}
+
+.receiver-selection .selection-icon {
+    background-color: rgba(247, 250, 252, 0.1);
+    color: var(--light);
+}
+
+.selection-card h3 {
+    margin-bottom: 0.8rem; /* Reduced margin */
+    color: var(--light);
+    font-size: 1.4rem; /* Adjusted font size */
+}
+
+.selection-card p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem; /* Reduced margin */
+    font-size: 0.95rem; /* Adjusted font size */
+    flex-grow: 1;
+}
+
+.btn-donor {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-receiver {
+    background-color: var(--light);
+    color: var(--dark);
+}
+
+.btn-donor:hover {
+    background-color: var(--primary-light);
+}
+
+.btn-receiver:hover {
+    background-color: var(--light-dark);
+}
+
+/* --- Dashboard Layout (Donor) --- */
+.dashboard {
+    display: none;
+    min-height: 100vh;
+    background-color: var(--dark);
+}
+
+.donor-dashboard {
+    display: grid;
+    grid-template-columns: 220px 1fr; /* Slightly narrower sidebar */
+}
+
+.sidebar {
+    background-color: var(--dark-light);
+    padding: 1.5rem 1rem; /* Adjusted padding */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar .logo {
+    margin-bottom: 2rem; /* Adjusted margin */
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Reduced gap */
+    flex-grow: 1;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem; /* Reduced gap */
+    padding: 0.8rem 1rem; /* Adjusted padding */
+    border-radius: 6px;
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 0.95rem; /* Adjusted font size */
+}
+
+.menu-item i {
+    font-size: 1rem; /* Adjusted icon size */
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 1.5rem; /* Adjusted padding */
+}
+
+.main-content {
+    padding: 1.5rem 2rem; /* Adjusted padding */
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    margin-bottom: 2rem; /* Adjusted margin */
+    flex-wrap: wrap;
+    gap: 1rem; /* Reduced gap */
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Reduced gap */
+    flex-wrap: wrap;
+}
+
+.header-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Reduced gap */
+}
+
+.header-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem; /* Reduced gap */
+    background-color: var(--dark-light);
+    padding: 0.6rem 1rem; /* Adjusted padding */
+    border-radius: 8px; /* Slightly smaller border-radius */
+}
+
+.header-stat-item i {
+    font-size: 1.1rem; /* Adjusted icon size */
+    color: var(--primary);
+}
+
+.header-stat-item .stat-value {
+    font-size: 0.95rem; /* Adjusted font size */
+    font-weight: 600;
+    color: var(--light);
+}
+
+.header-stat-item .stat-label {
+    font-size: 0.75rem; /* Adjusted font size */
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem; /* Reduced gap */
+    flex-wrap: wrap;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem; /* Reduced gap */
+}
+
+.user-profile h3 {
+    font-size: 1.3rem; /* Adjusted font size */
+    font-weight: 600;
+    color: var(--light);
+}
+
+.dashboard-main {
+    padding: 0;
+    max-width: 100%;
+}
+
+/* --- Donor Specific Styles --- */
+.post-form {
+    background-color: var(--dark-light);
+    border-radius: 12px; /* Adjusted border-radius */
+    padding: 2rem; /* Adjusted padding */
+    margin-bottom: 2rem; /* Adjusted margin */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+.post-form h3 {
+    margin-bottom: 1.5rem; /* Reduced margin */
+    color: var(--light);
+    text-align: center;
+    font-size: 1.5rem; /* Adjusted font size */
+}
+
+.active-posts h3 {
+    margin-bottom: 1rem; /* Reduced margin */
+    color: var(--light);
+    font-size: 1.5rem; /* Adjusted font size */
+}
+
+.posts-container {
+    width: 100%;
+    background-color: var(--dark-light);
+    border-radius: 10px; /* Adjusted border-radius */
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.posts-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.posts-table th,
+.posts-table td {
+    padding: 1rem 1.2rem; /* Adjusted padding */
+    text-align: left;
+    border-bottom: 1px solid var(--gray-dark);
+    color: var(--text);
+    font-size: 0.9rem; /* Adjusted font size */
+}
+
+.posts-table thead {
+    background-color: var(--gray-dark);
+}
+
+.posts-table th {
+    font-size: 0.85rem; /* Adjusted font size */
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.posts-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.posts-table tbody tr:hover {
+    background-color: var(--secondary);
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.8rem; /* Reduced gap */
+    white-space: nowrap;
+}
+
+.btn-edit,
+.btn-delete,
+.btn-donation-done { /* Added class for styling */
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1rem; /* Adjusted icon size */
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0.4rem; /* Adjusted padding */
+    border-radius: 4px;
+}
+
+.btn-edit:hover {
+    color: var(--primary);
+    background-color: rgba(229, 62, 62, 0.1);
+}
+
+.btn-delete:hover {
+    color: var(--danger);
+    background-color: rgba(229, 62, 62, 0.1);
+}
+
+.btn-donation-done {
+    color: var(--success); /* Green color for done button */
+}
+.btn-donation-done:hover {
+    background-color: rgba(56, 161, 105, 0.1); /* Light green hover background */
+}
+
+
+/* --- Receiver Dashboard Styles --- */
+.receiver-dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--dark);
+}
+
+.receiver-dashboard .dashboard-header {
+    background-color: var(--dark-light);
+    padding: 1.2rem 2rem; /* Adjusted padding */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.receiver-dashboard .header-right {
+    gap: 1rem; /* Adjusted gap */
+}
+
+.search-section {
+    background-color: var(--dark-light);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+.search-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--light);
+    font-size: 1.5rem;
+}
+
+.search-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted min-width */
+    gap: 1rem; /* Reduced gap */
+    margin-bottom: 1.5rem; /* Reduced margin */
+}
+
+.search-results {
+    background-color: var(--dark-light);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem; /* Reduced margin */
+    flex-wrap: wrap;
+    gap: 0.8rem; /* Reduced gap */
+}
+
+.results-header h3 {
+    color: var(--light);
+    font-size: 1.4rem; /* Adjusted font size */
+}
+
+.results-count {
+    font-size: 0.95rem; /* Adjusted font size */
+    color: var(--text-light);
+}
+
+.donors-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Reduced gap */
+}
+
+.donor-card {
+    background-color: var(--dark);
+    border-radius: 12px; /* Adjusted border-radius */
+    padding: 1.5rem; /* Adjusted padding */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.donor-card:hover {
+    transform: translateY(-4px); /* Reduced lift on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Adjusted shadow */
+}
+
+.donor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem; /* Reduced margin */
+    flex-wrap: wrap;
+    gap: 0.8rem; /* Reduced gap */
+}
+
+.donor-distance {
+    font-size: 0.85rem; /* Adjusted font size */
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+.donor-info h4 {
+    margin-bottom: 0.6rem; /* Reduced margin */
+    color: var(--light);
+    font-size: 1.2rem; /* Adjusted font size */
+}
+
+.donor-info p {
+    color: var(--text-light);
+    margin-bottom: 0.8rem; /* Reduced margin */
+    display: flex;
+    align-items: center;
+    gap: 0.4rem; /* Reduced gap */
+    font-size: 0.9rem; /* Adjusted font size */
+}
+.donor-info p i {
+    color: var(--primary);
+}
+
+.donor-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Reduced gap */
+    font-size: 0.85rem; /* Adjusted font size */
+    color: var(--text-light);
+}
+
+.donor-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem; /* Reduced gap */
+}
+
+.donor-stats span i {
+    color: var(--primary);
+}
+
+.donor-actions {
+    display: flex;
+    gap: 1rem; /* Reduced gap */
+    margin-top: 1rem; /* Reduced margin */
+    padding-top: 1rem; /* Reduced padding */
+    border-top: 1px solid var(--gray-dark);
+    flex-wrap: wrap;
+}
+
+.donor-actions .btn-primary {
+    flex-grow: 1;
+    min-width: 120px; /* Reduced min-width */
+}
+
+/* --- Chat Interface --- */
+.chat-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 360px; /* Slightly narrower chat window */
+    height: 480px; /* Slightly shorter chat window */
+    background: var(--dark-light);
+    border-radius: 12px 0 0 0; /* Adjusted border-radius */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+    animation: slideInUp 0.4s ease-out;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.2rem; /* Adjusted padding */
+    background-color: var(--dark);
+    color: var(--white);
+    border-bottom: 1px solid var(--gray-dark);
+}
+
+.chat-partner {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem; /* Reduced gap */
+}
+
+.chat-partner h4 {
+    margin: 0;
+    font-size: 1rem; /* Adjusted font size */
+    color: var(--light);
+}
+
+.partner-blood-badge {
+    width: 32px; /* Slightly smaller badge */
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem; /* Adjusted font size */
+    font-weight: bold;
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-close-chat {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.5rem; /* Adjusted icon size */
+    cursor: pointer;
+    padding: 0 0.4rem; /* Adjusted padding */
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.btn-close-chat:hover {
+    color: var(--primary-light);
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem; /* Adjusted padding */
+    background-color: var(--dark);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem; /* Reduced gap */
+}
+
+.message {
+    max-width: 80%;
+    padding: 0.7rem 1rem; /* Adjusted padding */
+    border-radius: 10px; /* Adjusted border-radius */
+    word-wrap: break-word;
+    font-size: 0.9rem; /* Adjusted font size */
+}
+
+.message.sent {
+    background-color: var(--primary);
+    color: var(--white);
+    align-self: flex-end;
+    border-bottom-right-radius: 3px; /* Adjusted tail effect */
+}
+
+.message.received {
+    background-color: var(--gray-dark);
+    color: var(--text);
+    align-self: flex-start;
+    border-bottom-left-radius: 3px; /* Adjusted tail effect */
+}
+
+.chat-input {
+    display: flex;
+    padding: 1rem; /* Adjusted padding */
+    border-top: 1px solid var(--gray-dark);
+    background-color: var(--dark-light);
+    flex-shrink: 0;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 0.8rem; /* Adjusted padding */
+    border: 1px solid var(--gray);
+    border-radius: 6px; /* Adjusted border-radius */
+    margin-right: 0.8rem; /* Reduced margin */
+    background-color: var(--gray-dark);
+    color: var(--text);
+    font-size: 0.9rem; /* Adjusted font size */
+}
+
+.chat-input button {
+    padding: 0 1.2rem; /* Adjusted padding */
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 6px; /* Adjusted border-radius */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+    font-size: 0.9rem; /* Adjusted font size */
+}
+
+.chat-input button:hover {
+    background-color: var(--primary-light);
+}
+
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); } /* Reduced translation */
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .auth-container {
+        flex-direction: column; /* Stack promo and form */
+        align-items: center; /* Center items when stacked */
+        gap: 1.5rem;
+    }
+
+    .auth-promo {
+        min-width: unset; /* Remove min-width to allow shrinking */
+        max-width: 500px; /* Max width for promo when stacked */
+        width: 100%;
+        text-align: center;
+        flex: unset; /* Remove flex property when stacked */
+    }
+
+    .auth-form-wrapper {
+        min-width: unset; /* Remove min-width */
+        width: 100%;
+        flex: unset; /* Remove flex property when stacked */
+    }
+
+    .donor-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: relative;
+        height: auto;
+        max-height: 70vh; /* Reduced max-height for sidebar */
+        padding-bottom: 1rem;
+    }
+
+    .main-content {
+        padding: 1.2rem; /* Adjusted padding */
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-left, .header-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-stats {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        margin-top: 1rem; /* Adjusted margin */
+    }
+
+    .search-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .selection-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 15px; /* Further reduce base font size for smaller screens */
+    }
+
+    .auth-card {
+        padding: 1.5rem; /* Adjusted padding */
+    }
+
+    /* Registration form reverts to single column on mobile */
+    .registration-form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem; /* Maintain vertical gap */
+    }
+
+    .dashboard-selection {
+        padding: 1rem;
+    }
+
+    .selection-card {
+        padding: 1.5rem; /* Adjusted padding */
+    }
+
+    .main-content {
+        padding: 0.8rem; /* Further reduced padding */
+    }
+
+    .post-form, .search-section, .search-results {
+        padding: 1.5rem; /* Main section padding remains decent */
+    }
+
+    .posts-table th,
+    .posts-table td {
+        padding: 0.7rem 0.8rem; /* Further reduced padding */
+        font-size: 0.85rem; /* Further reduced font size */
+    }
+
+    /* Hide more table columns on smaller screens (optional) */
+    .posts-table thead th:nth-child(4), /* Contact */
+    .posts-table tbody td:nth-child(4),
+    .posts-table thead th:nth-child(5), /* Notes */
+    .posts-table tbody td:nth-child(5) {
+        display: none;
+    }
+
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-promo h1 {
+        font-size: 2.5rem;
+    }
+    .auth-promo p {
+        font-size: 1rem;
+    }
+    .auth-card {
+        padding: 1.2rem;
+    }
+    .logo {
+        font-size: 1.3rem;
+    }
+    .logo i {
+        font-size: 1.6rem;
+    }
+    .auth-card h2 {
+        font-size: 1.4rem;
+    }
+    .btn-primary, .btn-secondary, .btn-logout {
+        font-size: 0.95rem;
+        padding: 0.7rem;
+    }
+    .selection-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+    .selection-card h3 {
+        font-size: 1.2rem;
+    }
+    .header-left, .header-right {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .header-stats {
+        flex-direction: column;
+        gap: 0.6rem;
+        align-items: flex-start;
+    }
+    .user-profile {
+        width: 100%;
+        justify-content: center;
+    }
+    .donor-actions {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .chat-input input {
+        font-size: 0.85rem;
+    }
+}
