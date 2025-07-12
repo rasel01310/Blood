@@ -1,370 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RedLife</title>
-    <link rel="icon" type="image/x-icon" href="image/redlife-icon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RedLife</title>
+  <link rel="icon" type="image/x-icon" href="image/redlife-icon.png"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-    <div id="authContainer" class="auth-container">
-        <div class="auth-promo">
-            <h1>RedLife</h1>
-            <p> <span style="color: rgb(245, 240, 121);">A drop of Hope</span></p>
-            <img src="image/redlife-logo2.png" alt="RedLife Logo">
-        </div>
-        <div class="auth-form-wrapper">
-            <div id="loginCard" class="auth-card">
-                <div class="logo"><i class="fas fa-hand-holding-medical"></i> RedLife</div>
-                <h2>Login to Your Account</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">Email or Phone</label>
-                        <input type="text" id="loginEmail" placeholder="Enter your email or phone" required>
-                    </div>
-                    <div class="form-group password-input">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                    <button type="submit" class="btn-primary">Login</button>
-                </form>
-                <div class="auth-switch">
-                    Don't have an account? <a href="#" id="showRegister">Register here</a>
-                </div>
-            </div>
-
-            <div id="registrationCard" class="auth-card" style="display: none;">
-                <div class="logo"><i class="fas fa-hand-holding-medical"></i> RedLife</div>
-                <h2>Create Your Account</h2>
-                <form id="registrationForm" class="registration-form-grid">
-                    <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" placeholder="Enter your full name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" placeholder="e.g., 01xxxxxxxxx" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="Enter your email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="bloodType">Blood Type</label>
-                        <select id="bloodType" required>
-                            <option value="">Select Blood Type</option>
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="division">Division</label>
-                        <select id="division" required>
-                            <option value="">Select Division</option>
-                            <option value="Dhaka">Dhaka</option>
-                            <option value="Chittagong">Chittagong</option>
-                            <option value="Rajshahi">Rajshahi</option>
-                            <option value="Khulna">Khulna</option>
-                            <option value="Barishal">Barishal</option>
-                            <option value="Sylhet">Sylhet</option>
-                            <option value="Rangpur">Rangpur</option>
-                            <option value="Mymensingh">Mymensingh</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="district">District</label>
-                        <select id="district" disabled required>
-                            <option value="">Select Division First</option>
-                        </select>
-                    </div>
-                    <div class="form-group password-input">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Create a password" required>
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                    <div class="form-group password-input">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                        <i class="fas fa-eye toggle-password"></i>
-                    </div>
-                    <button type="submit" class="btn-primary">Register</button>
-                </form>
-                <div class="auth-switch">
-                    Already have an account? <a href="#" id="showLogin">Login here</a>
-                </div>
-            </div>
-        </div>
+  <!-- 🔐 Login and Registration -->
+  <div id="authContainer" class="auth-container">
+    <div class="auth-promo">
+      <h1>RedLife</h1>
+      <p><span style="color: rgb(245, 240, 121);">A drop of Hope</span></p>
+      <img src="image/redlife-logo2.png" alt="RedLife Logo"/>
     </div>
-
-    <div id="dashboardSelection" class="dashboard-selection" style="display: none;">
-        <h2>Select Your Role</h2>
-        <div class="selection-cards">
-            <div class="selection-card donor-selection">
-                <div class="selection-icon">
-                    <i class="fas fa-hand-holding-heart"></i>
-                </div>
-                <h3>I want to Donate</h3>
-                <p>Register as a donor to help save lives by offering your blood.</p>
-                <button id="donorBtn" class="btn-primary btn-donor">Proceed as Donor</button>
-            </div>
-            <div class="selection-card receiver-selection">
-                <div class="selection-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>I need Blood</h3>
-                <p>Register as a receiver to search for available blood donors near you.</p>
-                <button id="receiverBtn" class="btn-primary btn-receiver">Proceed as Receiver</button>
-            </div>
+    <div class="auth-form-wrapper">
+      <!-- Login Card -->
+      <div id="loginCard" class="auth-card">
+        <div class="logo"><i class="fas fa-hand-holding-medical"></i> RedLife</div>
+        <h2>Login to Your Account</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="text" id="loginEmail" placeholder="Enter your email" required/>
+          </div>
+          <div class="form-group password-input">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required/>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
+          <button type="submit" class="btn-primary">Login</button>
+        </form>
+        <div class="auth-switch">
+          Don't have an account? <a href="#" id="showRegister">Register here</a>
         </div>
+      </div>
+
+      <!-- Registration Card -->
+      <div id="registrationCard" class="auth-card" style="display: none;">
+        <div class="logo"><i class="fas fa-hand-holding-medical"></i> RedLife</div>
+        <h2>Create Your Account</h2>
+        <form id="registrationForm" class="registration-form-grid">
+          <div class="form-group"><label for="fullName">Full Name</label><input type="text" id="fullName" required/></div>
+          <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" required/></div>
+          <div class="form-group"><label for="email">Email</label><input type="email" id="email" required/></div>
+          <div class="form-group">
+            <label for="bloodType">Blood Type</label>
+            <select id="bloodType" required>
+              <option value="">Select</option>
+              <option value="A+">A+</option><option value="A-">A-</option>
+              <option value="B+">B+</option><option value="B-">B-</option>
+              <option value="AB+">AB+</option><option value="AB-">AB-</option>
+              <option value="O+">O+</option><option value="O-">O-</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="division">Division</label>
+            <select id="division" required>
+              <option value="">Select Division</option>
+              <option value="Dhaka">Dhaka</option><option value="Chittagong">Chittagong</option>
+              <option value="Rajshahi">Rajshahi</option><option value="Khulna">Khulna</option>
+              <option value="Barishal">Barishal</option><option value="Sylhet">Sylhet</option>
+              <option value="Rangpur">Rangpur</option><option value="Mymensingh">Mymensingh</option>
+            </select>
+          </div>
+          <div class="form-group"><label for="district">District</label><select id="district" required><option value="">Select</option></select></div>
+          <div class="form-group password-input"><label for="password">Password</label><input type="password" id="password" required/></div>
+          <div class="form-group password-input"><label for="confirmPassword">Confirm</label><input type="password" id="confirmPassword" required/></div>
+          <button type="submit" class="btn-primary">Register</button>
+        </form>
+        <div class="auth-switch">Already have an account? <a href="#" id="showLogin">Login here</a></div>
+      </div>
     </div>
+  </div>
 
-    <div id="donorDashboard" class="dashboard donor-dashboard" style="display: none;">
-        <aside class="sidebar">
-            <div class="logo"><i class="fas fa-hand-holding-medical"></i>RedLife</div>
-            <nav class="menu">
-                <a href="#" class="menu-item active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i> Donation History</a>
-                <a href="#" class="menu-item"><i class="fas fa-cog"></i> Settings</a>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="switchRoleBtn" class="btn-primary">
-                    <i class="fas fa-exchange-alt"></i> Switch Role
-                </button>
-                <button class="btn-logout mt-4">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            <header class="dashboard-header">
-                <div class="header-left">
-                    <div class="user-profile">
-                        <div id="userBloodType" class="blood-badge">A+</div>
-                        <h3 id="userGreeting">Welcome, User!</h3>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <div class="header-stats">
-                        <div class="header-stat-item">
-                            <i class="fas fa-tint"></i>
-                            <div>
-                                <div id="donationCount" class="stat-value">0</div>
-                                <div class="stat-label">Donations</div>
-                            </div>
-                        </div>
-                        <div class="header-stat-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            <div>
-                                <div id="lastDonation" class="stat-value">Never</div>
-                                <div class="stat-label">Last Donation</div>
-                            </div>
-                        </div>
-                        <div class="header-stat-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <div id="userLocation" class="stat-value">N/A</div>
-                                <div class="stat-label">Location</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <section class="dashboard-main">
-                <button id="createPostBtn" class="btn-primary mb-5" style="width: auto;">
-                    <i class="fas fa-plus-circle"></i> Create Donation Post
-                </button>
-
-                <div id="donationPostForm" class="post-form" style="display: none;">
-                    <h3>Create New Donation Post</h3>
-                    <form id="donationForm">
-                        <div class="form-group">
-                            <label>Availability:</label>
-                            <div class="availability-options">
-                                <label class="availability-option">
-                                    <input type="checkbox" name="availability" value="immediate">
-                                    <span>Immediate (within hours)</span>
-                                </label>
-                                <label class="availability-option">
-                                    <input type="checkbox" name="availability" value="3days">
-                                    <span>Within 1-3 days</span>
-                                </label>
-                                <label class="availability-option">
-                                    <input type="checkbox" name="availability" value="scheduled">
-                                    <span>Scheduled (specify date/time in notes)</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="postDivision">Division</label>
-                            <select id="postDivision" required>
-                                <option value="">Select Division</option>
-                                <option value="Dhaka">Dhaka</option>
-                                <option value="Chittagong">Chittagong</option>
-                                <option value="Rajshahi">Rajshahi</option>
-                                <option value="Khulna">Khulna</option>
-                                <option value="Barishal">Barishal</option>
-                                <option value="Sylhet">Sylhet</option>
-                                <option value="Rangpur">Rangpur</option>
-                                <option value="Mymensingh">Mymensingh</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="postDistrict">District</label>
-                            <select id="postDistrict" disabled required>
-                                <option value="">Select Division First</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="postArea">Area/Thana/Upazila</label>
-                            <input type="text" id="postArea" placeholder="e.g., Mirpur 10, Ashulia" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Contact Preference:</label>
-                            <div class="contact-options">
-                                <label class="contact-option">
-                                    <input type="radio" name="contact" value="liveChat" checked>
-                                    <span>Live Chat (in-app)</span>
-                                </label>
-                                <label class="contact-option">
-                                    <input type="radio" name="contact" value="phone">
-                                    <span>Direct Phone Call</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="donationNotes">Additional Notes (Optional)</label>
-                            <textarea id="donationNotes" rows="3" placeholder="Any specific instructions, timings, or additional info..."></textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn-primary">Post Donation</button>
-                            <button type="button" id="cancelPostBtn" class="btn-secondary">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="active-posts">
-                    <h3>Your Active Posts</h3>
-                    <div id="donorPostsContainer" class="posts-container">
-                        <p class="text-light-dark">No active donation posts yet. Click "Create Donation Post" to add one.</p>
-                        </div>
-                </div>
-            </section>
-        </main>
+  <!-- 🎯 Role Selection -->
+  <div id="dashboardSelection" class="dashboard-selection" style="display: none;">
+    <h2>Select Your Role</h2>
+    <div class="selection-cards">
+      <div class="selection-card donor-selection">
+        <h3>I want to Donate</h3>
+        <button id="donorBtn" class="btn-primary btn-donor">Proceed as Donor</button>
+      </div>
+      <div class="selection-card receiver-selection">
+        <h3>I need Blood</h3>
+        <button id="receiverBtn" class="btn-primary btn-receiver">Proceed as Receiver</button>
+      </div>
     </div>
+  </div>
 
-    <div id="receiverDashboard" class="dashboard receiver-dashboard" style="display: none;">
-        <header class="dashboard-header">
-            <div class="header-left">
-                <div class="user-profile">
-                    <div id="receiverBloodType" class="blood-badge">A+</div>
-                    <h3>Need Blood</h3>
-                </div>
-            </div>
-            <div class="header-right">
-                <button id="switchRoleBtn" class="btn-primary" style="width: auto;">
-                    <i class="fas fa-exchange-alt"></i> Switch Role
-                </button>
-                <button class="btn-logout" style="width: auto;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </header>
-
-        <main class="main-content">
-            <section class="search-section">
-                <h3>Find Donors</h3>
-                <form id="donorSearchForm">
-                    <div class="search-filters">
-                        <div class="form-group">
-                            <label for="searchBloodType">Blood Type</label>
-                            <select id="searchBloodType">
-                                <option value="">Any</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="searchDivision">Division</label>
-                            <select id="searchDivision">
-                                <option value="">Any</option>
-                                <option value="Dhaka">Dhaka</option>
-                                <option value="Chittagong">Chittagong</option>
-                                <option value="Rajshahi">Rajshahi</option>
-                                <option value="Khulna">Khulna</option>
-                                <option value="Barishal">Barishal</option>
-                                <option value="Sylhet">Sylhet</option>
-                                <option value="Rangpur">Rangpur</option>
-                                <option value="Mymensingh">Mymensingh</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="searchDistrict">District</label>
-                            <select id="searchDistrict" disabled>
-                                <option value="">Select Division First</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="searchUrgency">Urgency</label>
-                            <select id="searchUrgency">
-                                <option value="">Any</option>
-                                <option value="immediate">Immediate</option>
-                                <option value="3days">Within 1-3 Days</option>
-                                <option value="scheduled">Scheduled</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: auto;">
-                        <i class="fas fa-search"></i> Search Donors
-                    </button>
-                </form>
-            </section>
-
-            <section class="search-results">
-                <div class="results-header">
-                    <h3>Available Donors</h3>
-                    <span id="resultsCount" class="results-count">0 donors found</span>
-                </div>
-                <div id="donorsContainer" class="donors-container">
-                    <p class="text-light-dark">Use the filters above to find available donors.</p>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <div id="chatContainer" class="chat-container" style="display: none;">
-        <div class="chat-header">
-            <div class="chat-partner">
-                <div class="partner-blood-badge">A+</div>
-                <h4 id="chatPartnerName">Donor Name</h4>
-            </div>
-            <button class="btn-close-chat">&times;</button>
+  <!-- 💉 Donor Dashboard -->
+  <div id="donorDashboard" class="dashboard donor-dashboard" style="display: none;">
+    <header class="dashboard-header">
+      <h3 id="userGreeting">Welcome, User!</h3>
+      <button class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </header>
+    <main class="main-content">
+      <button id="createPostBtn" class="btn-primary">+ Create Donation Post</button>
+      <div id="donationPostForm" class="post-form" style="display: none;">
+        <form id="donationForm">
+          <div class="form-group"><label>Availability:</label>
+            <label><input type="checkbox" name="availability" value="immediate">Immediate</label>
+            <label><input type="checkbox" name="availability" value="3days">1-3 Days</label>
+            <label><input type="checkbox" name="availability" value="scheduled">Scheduled</label>
+          </div>
+          <div class="form-group"><label for="postDivision">Division</label><select id="postDivision"><option value="">Select</option></select></div>
+          <div class="form-group"><label for="postDistrict">District</label><select id="postDistrict"><option value="">Select</option></select></div>
+          <div class="form-group"><label for="postArea">Area</label><input type="text" id="postArea" required/></div>
+          <div class="form-group"><label for="donationNotes">Notes</label><textarea id="donationNotes"></textarea></div>
+          <button type="submit" class="btn-primary">Submit</button>
+        </form>
+      </div>
+      <div class="active-posts">
+        <h3>Your Posts</h3>
+        <div id="donorPostsContainer" class="posts-container">
+          <p>No active posts yet.</p>
         </div>
-        <div id="chatMessages" class="chat-messages">
-            </div>
-        <div class="chat-input">
-            <input type="text" id="chatMessageInput" placeholder="Type a message...">
-            <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
+      </div>
+    </main>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- 🔍 Receiver Dashboard -->
+  <div id="receiverDashboard" class="dashboard receiver-dashboard" style="display: none;">
+    <main class="main-content">
+      <form id="donorSearchForm">
+        <select id="searchBloodType"><option value="">Select Blood Group</option></select>
+        <select id="searchDivision"><option value="">Select Division</option></select>
+        <select id="searchDistrict"><option value="">Select District</option></select>
+        <button type="submit" id="searchButton" class="btn-primary">Search Donors</button>
+      </form>
+      <div class="search-results">
+        <h3>Available Donors</h3>
+        <div id="donorsContainer"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Link JS -->
+  <script src="script.js"></script>
 </body>
 </html>
