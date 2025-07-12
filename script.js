@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     name: fullName,
     phone: phone,
     email: email,
+    password: password,
     bloodGroup: bloodType,
     division: division,
     city: district, // frontend 'district' maps to backend 'city'
