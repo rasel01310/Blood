@@ -344,118 +344,108 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    donationForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
-        const postDivision = document.getElementById('postDivision').value;
-        const postDistrict = document.getElementById('postDistrict').value;
-        const postArea = document.getElementById('postArea').value;
-        const contactPreference = document.querySelector('input[name="contact"]:checked').value;
-        const donationNotes = document.getElementById('donationNotes').value;
+donationForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
+    const postDivision = document.getElementById('postDivision').value;
+    const postDistrict = document.getElementById('postDistrict').value;
+    const postArea = document.getElementById('postArea').value;
+    const contactPreference = document.querySelector('input[name="contact"]:checked').value;
+    const donationNotes = document.getElementById('donationNotes').value;
 
-        if (availability.length === 0) {
-            alert('Please select at least one availability option.');
-            return;
-        }
+    const newPost = {
+        donorId: currentUser.id,
+        donorName: currentUser.fullName,
+        donorPhone: currentUser.phone,
+        donorEmail: currentUser.email,
+        donorBloodType: currentUser.bloodType,
+        division: postDivision,
+        district: postDistrict,
+        area: postArea,
+        availability: availability,
+        contactPreference: contactPreference,
+        notes: donationNotes,
+        postDate: new Date().toLocaleDateString(),
+        status: 'Active'
+    };
 
-        const newPost = {
-            id: Date.now(),
-            donorId: currentUser.id,
-            donorName: currentUser.fullName,
-            donorBloodType: currentUser.bloodType,
-            donorPhone: currentUser.phone,
-            donorEmail: currentUser.email,
-            division: postDivision,
-            district: postDistrict,
-            area: postArea,
-            availability: availability,
-            contactPreference: contactPreference,
-            notes: donationNotes,
-            postDate: new Date().toLocaleDateString(),
-            status: 'Active' // 'Active' or 'Completed'
-        };
-
-        donationPosts.push(newPost);
-        currentUser.posts.push(newPost.id); // Store post IDs in user's profile
-        saveData();
-        alert('Donation post created successfully!');
+    fetch("http://localhost:8080/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPost)
+    })
+    .then(res => res.json())
+    .then(post => {
+        alert("Donation post created successfully!");
         donationForm.reset();
         donationPostForm.style.display = 'none';
-        updateDonorDashboard();
-        document.getElementById('postDistrict').innerHTML = '<option value="">Select Division First</option>';
-        document.getElementById('postDistrict').disabled = true;
+        loadDonorPosts(); // fetches posts from backend
+    })
+    .catch(err => {
+        alert("Failed to create post.");
+        console.error(err);
     });
+});
 
-    function updateDonorDashboard() {
-        if (!currentUser || currentUser.role !== 'donor') return;
+  function updateDonorDashboard() {
+    if (!currentUser || currentUser.role !== 'donor') return;
 
-        userBloodType.textContent = currentUser.bloodType;
-        userGreeting.textContent = `Welcome, ${currentUser.fullName}!`;
-        donationCountElement.textContent = currentUser.donationsCount;
-        userLocationElement.textContent = `${currentUser.district}, ${currentUser.division}`;
-        lastDonationElement.textContent = currentUser.lastDonation ? new Date(currentUser.lastDonation).toLocaleDateString() : 'Never';
+    userBloodType.textContent = currentUser.bloodType;
+    userGreeting.textContent = `Welcome, ${currentUser.fullName}!`;
+    userLocationElement.textContent = `${currentUser.district}, ${currentUser.division}`;
+    donationCountElement.textContent = currentUser.donationsCount || 0;
+    lastDonationElement.textContent = currentUser.lastDonation || "Never";
 
-        const userActivePosts = donationPosts.filter(post => post.donorId === currentUser.id && post.status === 'Active');
-
-        if (userActivePosts.length === 0) {
-            donorPostsContainer.innerHTML = '<p class="text-light-dark">No active donation posts yet. Click "Create Donation Post" to add one.</p>';
-            return;
-        }
-
-        let tableHTML = `
-            <table class="posts-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Location</th>
-                        <th>Availability</th>
-                        <th>Contact</th>
-                        <th class="d-none d-md-table-cell">Notes</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        userActivePosts.forEach(post => {
-            tableHTML += `
-                <tr>
-                    <td>${post.postDate}</td>
-                    <td>${post.area}, ${post.district}</td>
-                    <td>${post.availability.join(', ')}</td>
-                    <td>${post.contactPreference === 'liveChat' ? 'Chat' : 'Phone'}</td>
-                    <td class="d-none d-md-table-cell">${post.notes ? post.notes.substring(0, 30) + '...' : 'N/A'}</td>
-                    <td><span class="status-badge active">${post.status}</span></td>
-                    <td class="actions-cell">
-                        <button class="btn-donation-done" data-post-id="${post.id}" title="Mark as Done"><i class="fas fa-check-circle"></i></button>
-                        <button class="btn-edit" data-post-id="${post.id}" title="Edit Post"><i class="fas fa-edit"></i></button>
-                        <button class="btn-delete" data-post-id="${post.id}" title="Delete Post"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                </tr>
-            `;
-        });
-        tableHTML += `</tbody></table>`;
-        donorPostsContainer.innerHTML = tableHTML;
-    }
-
-    // Handle "Donation Done" button click
-    donorPostsContainer.addEventListener('click', (e) => {
-        if (e.target.closest('.btn-donation-done')) {
-            const postId = parseInt(e.target.closest('.btn-donation-done').dataset.postId);
-            const postIndex = donationPosts.findIndex(post => post.id === postId);
-
-            if (postIndex > -1) {
-                donationPosts[postIndex].status = 'Completed';
-                currentUser.donationsCount = (currentUser.donationsCount || 0) + 1; // Increment donation count
-                currentUser.lastDonation = new Date().toISOString().split('T')[0]; // Set current date
-                saveData();
-                alert('Donation marked as completed! Your donation count has been updated.');
-                updateDonorDashboard(); // Refresh the table
+    loadDonorPosts(); // use new loader
+}
+function loadDonorPosts() {
+    fetch(`http://localhost:8080/api/posts/donor/${currentUser.id}`)
+        .then(res => res.json())
+        .then(userActivePosts => {
+            if (userActivePosts.length === 0) {
+                donorPostsContainer.innerHTML = '<p>No active posts.</p>';
+                return;
             }
-        }
-        // Add similar handlers for btn-edit and btn-delete here later
-    });
+
+            let tableHTML = `
+                <table class="posts-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Availability</th>
+                            <th>Contact</th>
+                            <th class="d-none d-md-table-cell">Notes</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            userActivePosts.forEach(post => {
+                tableHTML += `
+                    <tr>
+                        <td>${post.postDate}</td>
+                        <td>${post.area}, ${post.district}</td>
+                        <td>${post.availability.join(', ')}</td>
+                        <td>${post.contactPreference === 'liveChat' ? 'Chat' : 'Phone'}</td>
+                        <td class="d-none d-md-table-cell">${post.notes || 'N/A'}</td>
+                        <td><span class="status-badge active">${post.status}</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-donation-done" data-post-id="${post.id}" title="Mark as Done"><i class="fas fa-check-circle"></i></button>
+                            <button class="btn-delete" data-post-id="${post.id}" title="Delete Post"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            donorPostsContainer.innerHTML = tableHTML;
+        });
+}
+
+
 
     // --- Receiver Dashboard Functions ---
     function populateSearchFilters() {
