@@ -215,32 +215,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle Login
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const loginEmail = document.getElementById('loginEmail').value;
-        const loginPassword = document.getElementById('loginPassword').value;
+   document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const loginEmail = document.getElementById('loginEmail').value;
+    const loginPassword = document.getElementById('loginPassword').value;
 
-        const foundUser = users.find(user =>
-            (user.email === loginEmail || user.phone === loginEmail) && user.password === loginPassword
-        );
-
-        if (foundUser) {
-            currentUser = foundUser;
-            saveData();
-            alert('Login successful!');
-            if (currentUser.role) {
-                if (currentUser.role === 'donor') {
-                    showDonorDashboard();
-                } else {
-                    showReceiverDashboard();
-                }
-            } else {
-                showDashboardSelection();
-            }
+    fetch("http://localhost:8080/api/donors/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            emailOrPhone: loginEmail,
+            password: loginPassword // not validated for now
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Login failed");
+        return res.json();
+    })
+    .then(user => {
+        currentUser = {
+            ...user,
+            password: loginPassword // optional, simulate password field
+        };
+        saveData(); // if needed locally
+        alert("Login successful!");
+        if (currentUser.role === 'donor') {
+            showDonorDashboard();
+        } else if (currentUser.role === 'receiver') {
+            showReceiverDashboard();
         } else {
-            alert('Invalid email/phone or password.');
+            showDashboardSelection();
         }
+    })
+    .catch(err => {
+        console.error("Login error", err);
+        alert("Invalid email/phone or password.");
     });
+});
+
 
     // Populate Districts based on Division
     divisionSelect.addEventListener('change', () => {
