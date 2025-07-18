@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
     const loginCard = document.getElementById('loginCard');
     const registrationCard = document.getElementById('registrationCard');
     const showRegisterLink = document.getElementById('showRegister');
@@ -13,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const switchRoleButtons = document.querySelectorAll('#switchRoleBtn');
     const logoutButtons = document.querySelectorAll('.btn-logout');
 
-    // Registration Form specific elements
+    // Registration Form elements
     const divisionSelect = document.getElementById('division');
     const districtSelect = document.getElementById('district');
 
-    // Donor Dashboard specific elements
+    // Donor Dashboard elements
     const createPostBtn = document.getElementById('createPostBtn');
     const donationPostForm = document.getElementById('donationPostForm');
     const cancelPostBtn = document.getElementById('cancelPostBtn');
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lastDonationElement = document.getElementById('lastDonation');
     const userLocationElement = document.getElementById('userLocation');
 
-    // Receiver Dashboard specific elements
+    // Receiver Dashboard elements
     const searchDivisionSelect = document.getElementById('searchDivision');
     const searchDistrictSelect = document.getElementById('searchDistrict');
     const donorSearchForm = document.getElementById('donorSearchForm');
@@ -44,23 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatMessageInput = document.getElementById('chatMessageInput');
     const sendMessageBtn = document.getElementById('sendMessageBtn');
 
-    // --- In-memory Data Store (Simulating Backend) ---
-    // In a real application, this would be handled by a database
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    let donationPosts = JSON.parse(localStorage.getItem('donationPosts')) || [];
+    // Application State
     let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-    let chats = JSON.parse(localStorage.getItem('chats')) || {}; // Store chat messages
+    let chats = JSON.parse(localStorage.getItem('chats')) || {};
     let currentChatPartnerId = null;
 
-    // Helper to save data to localStorage
-    const saveData = () => {
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('donationPosts', JSON.stringify(donationPosts));
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        localStorage.setItem('chats', JSON.stringify(chats));
-    };
-
-    // --- City Data (Bangladesh Divisions and Districts) ---
+    // Bangladesh Divisions and Districts
     const cities = {
         Dhaka: ["Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"],
         Chittagong: ["Bandarban", "Brahmanbaria", "Chandpur", "Chittagong", "Comilla", "Cox's Bazar", "Feni", "Khagrachari", "Lakshmipur", "Noakhali", "Rangamati"],
@@ -72,7 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
         Mymensingh: ["Jamalpur", "Mymensingh", "Netrokona", "Sherpur"]
     };
 
-    // --- UI State Management ---
+    // Helper Functions
+    const saveData = () => {
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.setItem('chats', JSON.stringify(chats));
+    };
+
+    const handleApiError = (error) => {
+        console.error("API Error:", error);
+        return error.message || "An error occurred";
+    };
+
+    // UI State Management
     const showAuthContainer = () => {
         document.getElementById('authContainer').style.display = 'flex';
         dashboardSelection.style.display = 'none';
@@ -105,18 +106,22 @@ document.addEventListener('DOMContentLoaded', () => {
         receiverDashboard.style.display = 'flex';
         chatContainer.style.display = 'none';
         populateSearchFilters();
-        searchDonors(); // Initial search
+        searchDonors();
     };
 
     const showChat = (partnerId) => {
         currentChatPartnerId = partnerId;
-        const partner = users.find(u => u.id === partnerId);
-        if (partner) {
-            chatPartnerName.textContent = partner.fullName || 'Unknown User';
-            // Update partner blood badge if needed
-        }
-        loadChatMessages(partnerId);
-        chatContainer.style.display = 'flex';
+        fetch(`http://localhost:8080/api/users/${partnerId}`)
+            .then(res => res.json())
+            .then(partner => {
+                chatPartnerName.textContent = partner.fullName || 'Unknown User';
+                loadChatMessages(partnerId);
+                chatContainer.style.display = 'flex';
+            })
+            .catch(err => {
+                console.error("Failed to load chat partner:", err);
+                alert("Could not start chat");
+            });
     };
 
     const hideChat = () => {
@@ -124,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainer.style.display = 'none';
     };
 
-    // --- Authentication Flow ---
+    // Authentication Flow
     showRegisterLink.addEventListener('click', (e) => {
         e.preventDefault();
         loginCard.style.display = 'none';
@@ -147,118 +152,84 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Handle Registration
+    // Registration Handler
     registrationForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const fullName = document.getElementById('fullName').value;
-        const phone = document.getElementById('phone').value;
-        const email = document.getElementById('email').value;
-        const bloodType = document.getElementById('bloodType').value;
-        const division = document.getElementById('division').value;
-        const district = document.getElementById('district').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+        const formData = new FormData(registrationForm);
+        const userData = {
+            fullName: formData.get('fullName'),
+            phone: formData.get('phone'),
+            email: formData.get('email'),
+            password: formData.get('password'),
+            bloodType: formData.get('bloodType'),
+            division: formData.get('division'),
+            district: formData.get('district'),
+            role: 'DONOR'
+        };
 
-        if (password !== confirmPassword) {
+        if (formData.get('password') !== formData.get('confirmPassword')) {
             alert('Passwords do not match!');
             return;
         }
 
-        if (users.some(user => user.email === email || user.phone === phone)) {
-            alert('User with this email or phone already exists!');
-            return;
-        }
-
-     const newUser = {
-    name: fullName,
-    phone: phone,
-    email: email,
-    password: password,
-    bloodGroup: bloodType,
-    division: division,
-    city: district, // frontend 'district' maps to backend 'city'
-    dateOfBirth: "2000-01-01", // temporary, backend requires a date
-    gender: "Other",           // optional default
-    country: "Bangladesh",     // default
-    state: division,           // same as division
-    postalCode: "0000",        // default
-    address: `${district}, ${division}`,
-    lastDonationDate: null,
-    isAvailable: true
-};
-
-
-        fetch("http://localhost:8080/api/donors", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(newUser)
-})
-.then(response => {
-    if (!response.ok) throw new Error('Failed to register');
-    return response.json();
-})
-.then(data => {
-    alert("Registration successful! Please login.");
-    registrationForm.reset();
-    loginCard.style.display = 'block';
-    registrationCard.style.display = 'none';
-})
-.catch(error => {
-    console.error("Registration error:", error);
-    alert("Registration failed. Please try again.");
-});
-
-        registrationForm.reset();
-        loginCard.style.display = 'block';
-        registrationCard.style.display = 'none';
-    });
-
-    // Handle Login
-   document.getElementById('loginForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const loginEmail = document.getElementById('loginEmail').value;
-    const loginPassword = document.getElementById('loginPassword').value;
-
-    fetch("http://localhost:8080/api/donors/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            emailOrPhone: loginEmail,
-            password: loginPassword // not validated for now
+        fetch("http://localhost:8080/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData)
         })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Login failed");
-        return res.json();
-    })
-    .then(user => {
-        currentUser = {
-            ...user,
-            password: loginPassword // optional, simulate password field
-        };
-        saveData(); // if needed locally
-        alert("Login successful!");
-        if (currentUser.role === 'donor') {
-            showDonorDashboard();
-        } else if (currentUser.role === 'receiver') {
-            showReceiverDashboard();
-        } else {
-            showDashboardSelection();
-        }
-    })
-    .catch(err => {
-        console.error("Login error", err);
-        alert("Invalid email/phone or password.");
+        .then(response => {
+            if (!response.ok) throw new Error('Registration failed');
+            return response.json();
+        })
+        .then(data => {
+            alert("Registration successful! Please login.");
+            registrationForm.reset();
+            loginCard.style.display = 'block';
+            registrationCard.style.display = 'none';
+        })
+        .catch(error => {
+            alert(handleApiError(error));
+        });
     });
-});
 
+    // Login Handler
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailOrPhone = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
 
-    // Populate Districts based on Division
+        fetch("http://localhost:8080/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ emailOrPhone, password })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Login failed");
+            return response.json();
+        })
+        .then(data => {
+            currentUser = data.user;
+            currentUser.token = data.token; // Store JWT token
+            saveData();
+            
+            // Redirect based on role
+            if (currentUser.role === 'DONOR') {
+                showDonorDashboard();
+            } else if (currentUser.role === 'RECEIVER') {
+                showReceiverDashboard();
+            } else {
+                showDashboardSelection();
+            }
+        })
+        .catch(error => {
+            alert(handleApiError(error));
+        });
+    });
+
+    // Location Selection Helpers
     divisionSelect.addEventListener('change', () => {
         const selectedDivision = divisionSelect.value;
-        districtSelect.innerHTML = '<option value="">Select District</option>'; // Clear existing options
+        districtSelect.innerHTML = '<option value="">Select District</option>';
         districtSelect.disabled = true;
 
         if (selectedDivision && cities[selectedDivision]) {
@@ -272,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Populate search districts
     searchDivisionSelect.addEventListener('change', () => {
         const selectedDivision = searchDivisionSelect.value;
         searchDistrictSelect.innerHTML = '<option value="">Any</option>';
@@ -289,45 +259,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-    // --- Role Selection ---
+    // Role Selection
     donorBtn.addEventListener('click', () => {
-        currentUser.role = 'donor';
-        saveData();
-        showDonorDashboard();
-    });
-
-    receiverBtn.addEventListener('click', () => {
-        currentUser.role = 'receiver';
-        saveData();
-        showReceiverDashboard();
-    });
-
-    switchRoleButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            currentUser.role = null; // Reset role
+        fetch("http://localhost:8080/api/users/role", {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${currentUser.token}`
+            },
+            body: JSON.stringify({ role: 'DONOR' })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to update role");
+            return response.json();
+        })
+        .then(updatedUser => {
+            currentUser = updatedUser;
             saveData();
-            showDashboardSelection();
+            showDonorDashboard();
+        })
+        .catch(error => {
+            alert(handleApiError(error));
         });
     });
 
+    receiverBtn.addEventListener('click', () => {
+        fetch("http://localhost:8080/api/users/role", {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${currentUser.token}`
+            },
+            body: JSON.stringify({ role: 'RECEIVER' })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to update role");
+            return response.json();
+        })
+        .then(updatedUser => {
+            currentUser = updatedUser;
+            saveData();
+            showReceiverDashboard();
+        })
+        .catch(error => {
+            alert(handleApiError(error));
+        });
+    });
+
+    // Logout Handler
     logoutButtons.forEach(button => {
         button.addEventListener('click', () => {
             currentUser = null;
             saveData();
             showAuthContainer();
-            // Reset forms and clear dashboards
             document.getElementById('loginForm').reset();
             registrationForm.reset();
-            divisionSelect.innerHTML = '<option value="">Select Division</option>';
-            districtSelect.innerHTML = '<option value="">Select Division First</option>';
-            districtSelect.disabled = true;
-            donorPostsContainer.innerHTML = '<p class="text-light-dark">No active donation posts yet. Click "Create Donation Post" to add one.</p>';
-            donorsContainer.innerHTML = '<p class="text-light-dark">Use the filters above to find available donors.</p>';
         });
     });
 
-    // --- Donor Dashboard Functions ---
+    // Donor Dashboard Functions
     createPostBtn.addEventListener('click', () => {
         donationPostForm.style.display = 'block';
     });
@@ -335,87 +325,82 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelPostBtn.addEventListener('click', () => {
         donationPostForm.style.display = 'none';
         donationForm.reset();
-        document.getElementById('postDistrict').innerHTML = '<option value="">Select Division First</option>';
-        document.getElementById('postDistrict').disabled = true;
     });
 
-    // Populate post district based on post division
-    document.getElementById('postDivision').addEventListener('change', (e) => {
-        const selectedDivision = e.target.value;
-        const postDistrictSelect = document.getElementById('postDistrict');
-        postDistrictSelect.innerHTML = '<option value="">Select District</option>';
-        postDistrictSelect.disabled = true;
+    // Donation Post Creation
+    donationForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(donationForm);
+        const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
+        
+        const postData = {
+            division: formData.get('postDivision'),
+            district: formData.get('postDistrict'),
+            area: formData.get('postArea'),
+            availability: availability,
+            contactPreference: formData.get('contact'),
+            notes: formData.get('donationNotes')
+        };
 
-        if (selectedDivision && cities[selectedDivision]) {
-            cities[selectedDivision].forEach(district => {
-                const option = document.createElement('option');
-                option.value = district;
-                option.textContent = district;
-                postDistrictSelect.appendChild(option);
-            });
-            postDistrictSelect.disabled = false;
-        }
+        fetch("http://localhost:8080/api/posts", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${currentUser.token}`
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create post");
+            return response.json();
+        })
+        .then(() => {
+            alert("Donation post created successfully!");
+            donationForm.reset();
+            donationPostForm.style.display = 'none';
+            loadDonorPosts();
+        })
+        .catch(error => {
+            alert(handleApiError(error));
+        });
     });
 
-donationForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
-    const postDivision = document.getElementById('postDivision').value;
-    const postDistrict = document.getElementById('postDistrict').value;
-    const postArea = document.getElementById('postArea').value;
-    const contactPreference = document.querySelector('input[name="contact"]:checked').value;
-    const donationNotes = document.getElementById('donationNotes').value;
+    function updateDonorDashboard() {
+        if (!currentUser || currentUser.role !== 'DONOR') return;
 
-    const newPost = {
-        donorId: currentUser.id,
-        donorName: currentUser.fullName,
-        donorPhone: currentUser.phone,
-        donorEmail: currentUser.email,
-        donorBloodType: currentUser.bloodType,
-        division: postDivision,
-        district: postDistrict,
-        area: postArea,
-        availability: availability,
-        contactPreference: contactPreference,
-        notes: donationNotes,
-        postDate: new Date().toLocaleDateString(),
-        status: 'Active'
-    };
-
-    fetch("http://localhost:8080/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost)
-    })
-    .then(res => res.json())
-    .then(post => {
-        alert("Donation post created successfully!");
-        donationForm.reset();
-        donationPostForm.style.display = 'none';
-        loadDonorPosts(); // fetches posts from backend
-    })
-    .catch(err => {
-        alert("Failed to create post.");
-        console.error(err);
-    });
-});
-
-  function updateDonorDashboard() {
-    if (!currentUser || currentUser.role !== 'donor') return;
-
-    userBloodType.textContent = currentUser.bloodType;
-    userGreeting.textContent = `Welcome, ${currentUser.fullName}!`;
-    userLocationElement.textContent = `${currentUser.district}, ${currentUser.division}`;
-    donationCountElement.textContent = currentUser.donationsCount || 0;
-    lastDonationElement.textContent = currentUser.lastDonation || "Never";
-
-    loadDonorPosts(); // use new loader
-}
-function loadDonorPosts() {
-    fetch(`http://localhost:8080/api/posts/donor/${currentUser.id}`)
+        fetch(`http://localhost:8080/api/users/${currentUser.id}`, {
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
         .then(res => res.json())
-        .then(userActivePosts => {
-            if (userActivePosts.length === 0) {
+        .then(user => {
+            currentUser = user;
+            saveData();
+            
+            userBloodType.textContent = currentUser.bloodType;
+            userGreeting.textContent = `Welcome, ${currentUser.fullName}!`;
+            userLocationElement.textContent = `${currentUser.district}, ${currentUser.division}`;
+            donationCountElement.textContent = currentUser.donationCount || 0;
+            lastDonationElement.textContent = currentUser.lastDonationDate 
+                ? new Date(currentUser.lastDonationDate).toLocaleDateString() 
+                : "Never";
+
+            loadDonorPosts();
+        })
+        .catch(err => {
+            console.error("Failed to fetch user data:", err);
+        });
+    }
+
+    function loadDonorPosts() {
+        fetch(`http://localhost:8080/api/posts/donor/${currentUser.id}`, {
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load posts");
+            return res.json();
+        })
+        .then(posts => {
+            if (posts.length === 0) {
                 donorPostsContainer.innerHTML = '<p>No active posts.</p>';
                 return;
             }
@@ -436,18 +421,22 @@ function loadDonorPosts() {
                     <tbody>
             `;
 
-            userActivePosts.forEach(post => {
+            posts.forEach(post => {
                 tableHTML += `
                     <tr>
-                        <td>${post.postDate}</td>
+                        <td>${new Date(post.createdAt).toLocaleDateString()}</td>
                         <td>${post.area}, ${post.district}</td>
                         <td>${post.availability.join(', ')}</td>
                         <td>${post.contactPreference === 'liveChat' ? 'Chat' : 'Phone'}</td>
                         <td class="d-none d-md-table-cell">${post.notes || 'N/A'}</td>
-                        <td><span class="status-badge active">${post.status}</span></td>
+                        <td><span class="status-badge ${post.status.toLowerCase()}">${post.status}</span></td>
                         <td class="actions-cell">
-                            <button class="btn-donation-done" data-post-id="${post.id}" title="Mark as Done"><i class="fas fa-check-circle"></i></button>
-                            <button class="btn-delete" data-post-id="${post.id}" title="Delete Post"><i class="fas fa-trash-alt"></i></button>
+                            <button class="btn-donation-done" data-post-id="${post.id}" title="Mark as Done">
+                                <i class="fas fa-check-circle"></i>
+                            </button>
+                            <button class="btn-delete" data-post-id="${post.id}" title="Delete Post">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -455,14 +444,56 @@ function loadDonorPosts() {
 
             tableHTML += '</tbody></table>';
             donorPostsContainer.innerHTML = tableHTML;
+
+            // Add event listeners for action buttons
+            document.querySelectorAll('.btn-donation-done').forEach(btn => {
+                btn.addEventListener('click', () => markPostAsDone(btn.dataset.postId));
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', () => deletePost(btn.dataset.postId));
+            });
+        })
+        .catch(err => {
+            console.error("Error loading posts:", err);
+            donorPostsContainer.innerHTML = '<p>Error loading posts. Please try again.</p>';
         });
-}
+    }
 
+    function markPostAsDone(postId) {
+        fetch(`http://localhost:8080/api/posts/${postId}/complete`, {
+            method: "PUT",
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to mark post as done");
+            loadDonorPosts();
+        })
+        .catch(err => {
+            console.error("Error marking post as done:", err);
+            alert("Failed to mark post as done");
+        });
+    }
 
+    function deletePost(postId) {
+        if (!confirm("Are you sure you want to delete this post?")) return;
+        
+        fetch(`http://localhost:8080/api/posts/${postId}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to delete post");
+            loadDonorPosts();
+        })
+        .catch(err => {
+            console.error("Error deleting post:", err);
+            alert("Failed to delete post");
+        });
+    }
 
-    // --- Receiver Dashboard Functions ---
+    // Receiver Dashboard Functions
     function populateSearchFilters() {
-        // Division is already populated by HTML, just ensure district is clear
         searchDistrictSelect.innerHTML = '<option value="">Select Division First</option>';
         searchDistrictSelect.disabled = true;
     }
@@ -476,143 +507,167 @@ function loadDonorPosts() {
         const bloodType = document.getElementById('searchBloodType').value;
         const division = document.getElementById('searchDivision').value;
         const district = document.getElementById('searchDistrict').value;
-        const urgency = document.getElementById('searchUrgency').value;
 
-      fetch(`http://localhost:8080/api/donors/search?city=${district}&bloodGroup=${bloodType}`)
-    .then(res => res.json())
-    .then(data => {
-        displayDonors(data);
-    })
-    .catch(err => {
-        console.error("Error searching donors:", err);
-        donorsContainer.innerHTML = '<p class="text-light-dark">Error fetching donors from server.</p>';
-    });
+        let url = `http://localhost:8080/api/posts/search?bloodType=${bloodType}`;
+        if (district) url += `&district=${district}`;
+        else if (division) url += `&division=${division}`;
 
-        // Exclude current user's own posts if they are also a donor
-        if (currentUser && currentUser.role === 'donor') {
-            filteredDonors = filteredDonors.filter(post => post.donorId !== currentUser.id);
-        }
-
-        displayDonors(filteredDonors);
+        fetch(url, {
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Search failed");
+            return res.json();
+        })
+        .then(posts => {
+            displayDonors(posts);
+        })
+        .catch(err => {
+            console.error("Error searching donors:", err);
+            donorsContainer.innerHTML = '<p class="text-light-dark">Error fetching donors from server.</p>';
+        });
     }
 
-    function displayDonors(donors) {
+    function displayDonors(posts) {
         donorsContainer.innerHTML = '';
-        resultsCountElement.textContent = `${donors.length} donors found`;
+        resultsCountElement.textContent = `${posts.length} donors found`;
 
-        if (donors.length === 0) {
+        if (posts.length === 0) {
             donorsContainer.innerHTML = '<p class="text-light-dark">No donors found matching your criteria. Try adjusting your filters.</p>';
             return;
         }
 
-        donors.forEach(donor => {
+        posts.forEach(post => {
             const donorCard = document.createElement('div');
             donorCard.classList.add('donor-card');
             donorCard.innerHTML = `
                 <div class="donor-header">
                     <div class="user-profile">
-                        <div class="blood-badge">${donor.donorBloodType}</div>
-                        <h4>${donor.donorName}</h4>
+                        <div class="blood-badge">${post.donor.bloodType}</div>
+                        <h4>${post.donor.fullName}</h4>
                     </div>
                     <span class="donor-distance">Approx. 5 km away</span>
                 </div>
                 <div class="donor-info">
-                    <p><i class="fas fa-map-marker-alt"></i> ${donor.area}, ${donor.district}, ${donor.division}</p>
-                    <p><i class="fas fa-calendar-alt"></i> Posted on ${donor.postDate}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> ${post.area}, ${post.district}, ${post.division}</p>
+                    <p><i class="fas fa-calendar-alt"></i> Posted on ${new Date(post.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div class="donor-stats">
-                    <span><i class="fas fa-clock"></i> Availability: ${donor.availability.map(a => {
+                    <span><i class="fas fa-clock"></i> Availability: ${post.availability.map(a => {
                         if (a === 'immediate') return 'Immediate';
                         if (a === '3days') return '1-3 Days';
                         if (a === 'scheduled') return 'Scheduled';
                         return a;
                     }).join(', ')}</span>
-                    <span><i class="fas fa-notes-medical"></i> Notes: ${donor.notes ? donor.notes.substring(0, 50) + '...' : 'N/A'}</span>
+                    <span><i class="fas fa-notes-medical"></i> Notes: ${post.notes ? post.notes.substring(0, 50) + '...' : 'N/A'}</span>
                 </div>
                 <div class="donor-actions">
-                    ${donor.contactPreference === 'liveChat' ? `<button class="btn-primary btn-chat-donor" data-donor-id="${donor.donorId}" data-donor-name="${donor.donorName}" data-blood-type="${donor.donorBloodType}"><i class="fas fa-comment-dots"></i> Chat Now</button>` : ''}
-                    ${donor.contactPreference === 'phone' ? `<a href="tel:${donor.donorPhone}" class="btn-primary"><i class="fas fa-phone-alt"></i> Call Donor</a>` : ''}
+                    ${post.contactPreference === 'liveChat' ? 
+                        `<button class="btn-primary btn-chat-donor" data-donor-id="${post.donor.id}">
+                            <i class="fas fa-comment-dots"></i> Chat Now
+                        </button>` : ''}
+                    ${post.contactPreference === 'phone' ? 
+                        `<a href="tel:${post.donor.phone}" class="btn-primary">
+                            <i class="fas fa-phone-alt"></i> Call Donor
+                        </a>` : ''}
                 </div>
             `;
             donorsContainer.appendChild(donorCard);
         });
+
+        // Add event listeners to chat buttons
+        document.querySelectorAll('.btn-chat-donor').forEach(btn => {
+            btn.addEventListener('click', () => showChat(btn.dataset.donorId));
+        });
     }
 
-    // --- Chat Functionality ---
-    donorsContainer.addEventListener('click', (e) => {
-        const chatButton = e.target.closest('.btn-chat-donor');
-        if (chatButton) {
-            const donorId = parseInt(chatButton.dataset.donorId);
-            showChat(donorId);
-        }
-    });
-
+    // Chat Functionality
     btnCloseChat.addEventListener('click', hideChat);
 
     sendMessageBtn.addEventListener('click', () => {
         const messageText = chatMessageInput.value.trim();
         if (messageText && currentChatPartnerId) {
-            addMessageToChat(currentUser.id, currentChatPartnerId, messageText);
-            chatMessageInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+            sendMessage(messageText);
         }
     });
 
     chatMessageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            sendMessageBtn.click();
+            sendMessage(chatMessageInput.value.trim());
         }
     });
 
-    function addMessageToChat(senderId, receiverId, messageText) {
-        const chatId = getChatId(senderId, receiverId);
-        if (!chats[chatId]) {
-            chats[chatId] = [];
-        }
+    function sendMessage(messageText) {
+        if (!messageText || !currentChatPartnerId) return;
 
-        const newMessage = {
-            sender: senderId,
-            text: messageText,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        chats[chatId].push(newMessage);
-        saveData();
-        loadChatMessages(receiverId); // Reload messages to show new one
+        fetch("http://localhost:8080/api/messages", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${currentUser.token}`
+            },
+            body: JSON.stringify({
+                receiverId: currentChatPartnerId,
+                content: messageText
+            })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to send message");
+            chatMessageInput.value = '';
+            loadChatMessages(currentChatPartnerId);
+        })
+        .catch(err => {
+            console.error("Error sending message:", err);
+        });
     }
 
     function loadChatMessages(partnerId) {
-        const chatId = getChatId(currentUser.id, partnerId);
-        chatMessages.innerHTML = ''; // Clear previous messages
-
-        const messages = chats[chatId] || [];
-        messages.forEach(msg => {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(msg.sender === currentUser.id ? 'sent' : 'received');
-            messageDiv.innerHTML = `
-                <p>${msg.text}</p>
-                <span>${msg.timestamp}</span>
-            `;
-            chatMessages.appendChild(messageDiv);
+        fetch(`http://localhost:8080/api/messages/${partnerId}`, {
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to load messages");
+            return res.json();
+        })
+        .then(messages => {
+            chatMessages.innerHTML = '';
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(msg.senderId === currentUser.id ? 'sent' : 'received');
+                messageDiv.innerHTML = `
+                    <p>${msg.content}</p>
+                    <span>${new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                `;
+                chatMessages.appendChild(messageDiv);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        })
+        .catch(err => {
+            console.error("Error loading messages:", err);
         });
-        chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
     }
 
-    function getChatId(userId1, userId2) {
-        // Ensure consistent chat ID regardless of sender/receiver order
-        return userId1 < userId2 ? `${userId1}-${userId2}` : `${userId2}-${userId1}`;
-    }
-
-
-    // --- Initial Load ---
+    // Initialize Application
     if (currentUser) {
-        if (currentUser.role === 'donor') {
-            showDonorDashboard();
-        } else if (currentUser.role === 'receiver') {
-            showReceiverDashboard();
-        } else {
-            showDashboardSelection();
-        }
+        // Verify token is still valid
+        fetch("http://localhost:8080/api/auth/validate", {
+            headers: { "Authorization": `Bearer ${currentUser.token}` }
+        })
+        .then(res => {
+            if (res.ok) {
+                if (currentUser.role === 'DONOR') {
+                    showDonorDashboard();
+                } else if (currentUser.role === 'RECEIVER') {
+                    showReceiverDashboard();
+                } else {
+                    showDashboardSelection();
+                }
+            } else {
+                showAuthContainer();
+            }
+        })
+        .catch(() => showAuthContainer());
     } else {
         showAuthContainer();
     }
