@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showChat = (partnerId) => {
         currentChatPartnerId = partnerId;
-        fetch(`http://localhost:8080/api/users/${partnerId}`)
+        fetch(`http://192.168.0.104:8080/api/users/${partnerId}`)
             .then(res => res.json())
             .then(partner => {
                 chatPartnerName.textContent = partner.fullName || 'Unknown User';
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        fetch("http://localhost:8080/api/auth/register", {
+        fetch("http://192.168.0.104:8080/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData)
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailOrPhone = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        fetch("http://localhost:8080/api/auth/login", {
+        fetch("http://192.168.0.104:8080/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ emailOrPhone, password })
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Role Selection
     donorBtn.addEventListener('click', () => {
-        fetch("http://localhost:8080/api/users/role", {
+        fetch("http://192.168.0.104:8080/api/users/role", {
             method: "PUT",
             headers: { 
                 "Content-Type": "application/json",
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     receiverBtn.addEventListener('click', () => {
-        fetch("http://localhost:8080/api/users/role", {
+        fetch("http://192.168.0.104:8080/api/users/role", {
             method: "PUT",
             headers: { 
                 "Content-Type": "application/json",
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notes: formData.get('donationNotes')
         };
 
-        fetch("http://localhost:8080/api/posts", {
+        fetch("http://192.168.0.104:8080/api/posts", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateDonorDashboard() {
         if (!currentUser || currentUser.role !== 'DONOR') return;
 
-        fetch(`http://localhost:8080/api/users/${currentUser.id}`, {
+        fetch(`http://192.168.0.104:8080/api/users/${currentUser.id}`, {
             headers: { "Authorization": `Bearer ${currentUser.token}` }
         })
         .then(res => res.json())
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadDonorPosts() {
-        fetch(`http://localhost:8080/api/posts/donor/${currentUser.id}`, {
+        fetch(`http://192.168.0.104:8080/api/posts/donor/${currentUser.id}`, {
             headers: { "Authorization": `Bearer ${currentUser.token}` }
         })
         .then(res => {
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function markPostAsDone(postId) {
-        fetch(`http://localhost:8080/api/posts/${postId}/complete`, {
+        fetch(`http://192.168.0.104:8080/api/posts/${postId}/complete`, {
             method: "PUT",
             headers: { "Authorization": `Bearer ${currentUser.token}` }
         })
@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function deletePost(postId) {
         if (!confirm("Are you sure you want to delete this post?")) return;
         
-        fetch(`http://localhost:8080/api/posts/${postId}`, {
+        fetch(`http://192.168.0.104:8080/api/posts/${postId}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${currentUser.token}` }
         })
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const division = document.getElementById('searchDivision').value;
         const district = document.getElementById('searchDistrict').value;
 
-        let url = `http://localhost:8080/api/posts/search?bloodType=${bloodType}`;
+        let url = `http://192.168.0.104:8080/api/posts/search?bloodType=${bloodType}`;
         if (district) url += `&district=${district}`;
         else if (division) url += `&division=${division}`;
 
@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendMessage(messageText) {
         if (!messageText || !currentChatPartnerId) return;
 
-        fetch("http://localhost:8080/api/messages", {
+        fetch("http://192.168.0.104:8080/api/messages", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadChatMessages(partnerId) {
-        fetch(`http://localhost:8080/api/messages/${partnerId}`, {
+        fetch(`http://192.168.0.104:8080/api/messages/${partnerId}`, {
             headers: { "Authorization": `Bearer ${currentUser.token}` }
         })
         .then(res => {
@@ -651,7 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Application
     if (currentUser) {
         // Verify token is still valid
-        fetch("http://localhost:8080/api/auth/validate", {
+        fetch("http://192.168.0.104:8080/api/auth/validate", {
             headers: { "Authorization": `Bearer ${currentUser.token}` }
         })
         .then(res => {
